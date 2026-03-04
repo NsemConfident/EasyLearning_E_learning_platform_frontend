@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@/navigation/AuthStack';
 import { useAuth } from '@/context/AuthContext';
@@ -26,36 +36,47 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>EASYLEARNING</Text>
-      {error && <Text style={styles.error}>{error}</Text>}
-      <TextInput
-        placeholder="Email"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Password"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <Button title={submitting ? 'Logging in...' : 'Login'} onPress={onSubmit} disabled={submitting} />
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Don't have an account? Register</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>EASYLEARNING</Text>
+        {error && <Text style={styles.error}>{error}</Text>}
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Button title={submitting ? 'Logging in...' : 'Login'} onPress={onSubmit} disabled={submitting} />
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link}>Don't have an account? Register</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#020617' },
+  scrollContent: { flexGrow: 1, padding: 24, paddingBottom: 48, justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#e5e7eb', marginBottom: 24, textAlign: 'center' },
   input: {
     backgroundColor: '#020617',

@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@/navigation/AuthStack';
 import { useAuth } from '@/context/AuthContext';
@@ -33,51 +43,62 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Create account</Text>
-      {error && <Text style={styles.error}>{error}</Text>}
-      <TextInput
-        placeholder="Name"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        placeholder="Email"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Password"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        placeholder="Confirm Password"
-        placeholderTextColor="#6b7280"
-        style={styles.input}
-        secureTextEntry
-        value={confirm}
-        onChangeText={setConfirm}
-      />
-      <Button title={submitting ? 'Registering...' : 'Register'} onPress={onSubmit} disabled={submitting} />
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Already have an account? Login</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Create account</Text>
+        {error && <Text style={styles.error}>{error}</Text>}
+        <TextInput
+          placeholder="Name"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          placeholder="Password"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          placeholderTextColor="#6b7280"
+          style={styles.input}
+          secureTextEntry
+          value={confirm}
+          onChangeText={setConfirm}
+        />
+        <Button title={submitting ? 'Registering...' : 'Register'} onPress={onSubmit} disabled={submitting} />
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.link}>Already have an account? Login</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#020617' },
+  scrollContent: { flexGrow: 1, padding: 24, paddingBottom: 48, justifyContent: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', color: '#e5e7eb', marginBottom: 24, textAlign: 'center' },
   input: {
     backgroundColor: '#020617',
