@@ -3,6 +3,7 @@ import { View, Text, Button, StyleSheet, FlatList, TouchableOpacity } from 'reac
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { fetchCourse, enrollInCourse, fetchCourseProgress, Course, Module } from '@/api/courses';
+import NavHeader from '@/components/NavHeader';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CourseDetail'>;
 
@@ -58,7 +59,14 @@ const CourseDetailScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{course.title}</Text>
+      <NavHeader
+        title={course.title}
+        variant="dark"
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        onMenuPress={() => {}}
+        onNotificationPress={() => {}}
+      />
       {course.description && <Text style={styles.text}>{course.description}</Text>}
       <Text style={styles.meta}>Instructor: {course.instructor_name}</Text>
       <Text style={styles.meta}>Progress: {percentage}%</Text>

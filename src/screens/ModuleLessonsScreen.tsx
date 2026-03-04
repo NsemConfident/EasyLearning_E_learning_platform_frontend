@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { Course } from '@/api/courses';
+import NavHeader from '@/components/NavHeader';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ModuleLessons'>;
 
@@ -14,6 +15,14 @@ const ModuleLessonsScreen: React.FC<Props> = ({ route, navigation }) => {
   // Placeholder UI – you can wire state or context to pass lessons here.
   return (
     <View style={styles.container}>
+      <NavHeader
+        title={title}
+        variant="dark"
+        showBackButton
+        onBackPress={() => navigation.goBack()}
+        onMenuPress={() => {}}
+        onNotificationPress={() => {}}
+      />
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.text}>Implement lessons list by fetching lessons for this module.</Text>
       {/* Example of navigating to VideoPlayer:

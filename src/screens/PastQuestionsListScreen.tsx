@@ -5,6 +5,7 @@ import { RootStackParamList } from '@/navigation/RootNavigator';
 import { fetchPastQuestions, searchPastQuestions, PastQuestion } from '@/api/pastQuestions';
 import PastQuestionCard from '@/components/PastQuestionCard';
 import SearchBar from '@/components/SearchBar';
+import NavHeader from '@/components/NavHeader';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'App'>;
 
@@ -31,6 +32,13 @@ const PastQuestionsListScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#020617' }}>
+      <NavHeader
+        title="Past Questions"
+        variant="dark"
+        showBackButton={false}
+        onMenuPress={() => {}}
+        onNotificationPress={() => {}}
+      />
       <SearchBar value={query} onChangeText={setQuery} onSubmit={load} />
       <FlatList
         data={items}

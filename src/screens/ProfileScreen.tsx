@@ -1,12 +1,20 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
+import NavHeader from '@/components/NavHeader';
 
 const ProfileScreen: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
     <View style={styles.container}>
+      <NavHeader
+        title="Profile"
+        variant="dark"
+        showBackButton={false}
+        onMenuPress={() => {}}
+        onNotificationPress={() => {}}
+      />
       <Text style={styles.title}>Profile</Text>
       {user && (
         <>

@@ -7,14 +7,13 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { fetchCourses, Course } from '@/api/courses';
 import CourseCard from '@/components/CourseCard';
-import { Ionicons } from '@expo/vector-icons';
+import NavHeader from '@/components/NavHeader';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'App'>;
 
@@ -50,14 +49,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <NavHeader
+        title="Courses"
+        variant="light"
+        showBackButton={false}
+        onMenuPress={() => {}}
+        onNotificationPress={() => {}}
+      />
       <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerPlaceholder} />
-          <Text style={styles.headerTitle}>Popular Courses</Text>
-          <TouchableOpacity style={styles.searchButton} onPress={() => {}} accessibilityLabel="Search">
-            <Ionicons name="search" size={24} color="#374151" />
-          </TouchableOpacity>
-        </View>
 
         <ScrollView
           horizontal
@@ -100,19 +99,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f3f4f6' },
   container: { flex: 1, backgroundColor: '#f3f4f6' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#ffffff',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#e5e7eb',
-  },
-  headerPlaceholder: { width: 24, height: 24 },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#111827' },
-  searchButton: { padding: 4 },
   categoriesScroll: { maxHeight: 44, marginBottom: 8 },
   categoriesRow: {
     paddingHorizontal: 16,
