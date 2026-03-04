@@ -1,8 +1,9 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-// Adjust for your environment: emulator vs physical device
-const API_BASE_URL = 'http://10.0.2.2:8000/api';
+// Use your computer's LAN IP when testing on a physical device (Expo Go).
+// Use 10.0.2.2:8000 only when running in Android emulator.
+const API_BASE_URL = 'http://192.168.0.108:8000/api';
 
 let authToken: string | null = null;
 

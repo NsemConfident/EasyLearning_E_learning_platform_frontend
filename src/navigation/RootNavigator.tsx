@@ -28,8 +28,11 @@ const RootNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer key={user ? 'authenticated' : 'guest'}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={user ? 'App' : 'Auth'}
+      >
         {!user ? (
           <Stack.Screen name="Auth" component={AuthStack} />
         ) : (

@@ -1,15 +1,29 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { fetchCourses, Course } from '@/api/courses';
 import CourseCard from '@/components/CourseCard';
+import { Ionicons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'App'>;
+
+const CATEGORIES = ['All', 'Programming', 'Design', 'Web Development', 'Marketing', 'Business'];
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const load = useCallback(async () => {
     setRefreshing(true);
@@ -25,22 +39,98 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     load();
   }, [load]);
 
+  const filteredCourses =
+    selectedCategory === 'All'
+      ? courses
+      : courses.filter(
+          c =>
+            c.title.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+            (c.description?.toLowerCase().includes(selectedCategory.toLowerCase()) ?? false)
+        );
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#020617' }}>
-      <FlatList
-        data={courses}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <CourseCard
-            course={item}
-            onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
-          />
-        )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={load} tintColor="#fff" />}
-      />
-    </View>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerPlaceholder} />
+          <Text style={styles.headerTitle}>Popular Courses</Text>
+          <TouchableOpacity style={styles.searchButton} onPress={() => {}} accessibilityLabel="Search">
+            <Ionicons name="search" size={24} color="#374151" />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesRow}
+          style={styles.categoriesScroll}
+        >
+          {CATEGORIES.map(cat => (
+            <TouchableOpacity
+              key={cat}
+              style={[styles.chip, selectedCategory === cat && styles.chipSelected]}
+              onPress={() => setSelectedCategory(cat)}
+            >
+              <Text style={[styles.chipText, selectedCategory === cat && styles.chipTextSelected]}>
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <FlatList
+          data={filteredCourses}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => (
+            <CourseCard
+              course={item}
+              onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
+            />
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={load} tintColor="#22c55e" />
+          }
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
-export default HomeScreen;
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: '#f3f4f6' },
+  container: { flex: 1, backgroundColor: '#f3f4f6' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#e5e7eb',
+  },
+  headerPlaceholder: { width: 24, height: 24 },
+  headerTitle: { fontSize: 20, fontWeight: '700', color: '#111827' },
+  searchButton: { padding: 4 },
+  categoriesScroll: { maxHeight: 44, marginBottom: 8 },
+  categoriesRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#e5e7eb',
+    marginRight: 10,
+  },
+  chipSelected: { backgroundColor: '#22c55e' },
+  chipText: { fontSize: 14, color: '#374151', fontWeight: '500' },
+  chipTextSelected: { color: '#ffffff' },
+  listContent: { padding: 16, paddingBottom: 24 },
+});
 
+export default HomeScreen;
