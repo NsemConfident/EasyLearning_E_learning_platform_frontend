@@ -17,6 +17,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const BOOTSTRAP_TIMEOUT_MS = 5000;
+
     const bootstrap = async () => {
       try {
         const token = await loadStoredToken();
@@ -31,7 +33,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     };
-    bootstrap();
+
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, BOOTSTRAP_TIMEOUT_MS);
+
+    bootstrap().finally(() => {
+      clearTimeout(timeoutId);
+      setLoading(false);
+    });
   }, []);
 
   const login = async (email: string, password: string) => {
