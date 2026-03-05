@@ -18,6 +18,10 @@ export interface PastQuestion {
   questions_count?: number | null;
   /** Optional: download count (if provided by API) */
   downloads_count?: number | null;
+  /** Optional: direct PDF URL for the question paper (from Laravel/Firebase) */
+  question_pdf_url?: string | null;
+  /** Optional: direct PDF URL for the answer sheet (from Laravel/Firebase) */
+  answer_pdf_url?: string | null;
 }
 
 export interface Paginated<T> {
