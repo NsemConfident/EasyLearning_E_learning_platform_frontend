@@ -1,8 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, FlatList, RefreshControl, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Linking,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
-import { fetchPastQuestions, searchPastQuestions, PastQuestion } from '@/api/pastQuestions';
+import { fetchPastQuestions, searchPastQuestions, PastQuestion, getDownloadUrl } from '@/api/pastQuestions';
 import { fetchCategories, Category } from '@/api/categories';
 import PastQuestionCard from '@/components/PastQuestionCard';
 import SearchBar from '@/components/SearchBar';
@@ -52,16 +61,23 @@ const PastQuestionsListScreen: React.FC<Props> = ({ navigation }) => {
     load();
   }, [load]);
 
+  const handleDownload = (item: PastQuestion) => {
+    Linking.openURL(getDownloadUrl(item.id));
+  };
+
   return (
     <View style={styles.container}>
       <NavHeader
         title="Past Questions"
-        variant="dark"
+        variant="light"
         showBackButton={false}
         onMenuPress={() => {}}
         onNotificationPress={() => {}}
       />
-      <SearchBar value={query} onChangeText={setQuery} onSubmit={load} />
+      <View style={styles.header}>
+        <Text style={styles.subtitle}>Download and practice</Text>
+      </View>
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -72,7 +88,9 @@ const PastQuestionsListScreen: React.FC<Props> = ({ navigation }) => {
           style={[styles.chip, selectedCategoryId === ALL_ID && styles.chipSelected]}
           onPress={() => setSelectedCategoryId(ALL_ID)}
         >
-          <Text style={[styles.chipText, selectedCategoryId === ALL_ID && styles.chipTextSelected]}>All</Text>
+          <Text style={[styles.chipText, selectedCategoryId === ALL_ID && styles.chipTextSelected]}>
+            All
+          </Text>
         </TouchableOpacity>
         {categories.map(cat => (
           <TouchableOpacity
@@ -80,40 +98,80 @@ const PastQuestionsListScreen: React.FC<Props> = ({ navigation }) => {
             style={[styles.chip, selectedCategoryId === cat.id && styles.chipSelected]}
             onPress={() => setSelectedCategoryId(cat.id)}
           >
-            <Text style={[styles.chipText, selectedCategoryId === cat.id && styles.chipTextSelected]}>{cat.name}</Text>
+            <Text style={[styles.chipText, selectedCategoryId === cat.id && styles.chipTextSelected]}>
+              {cat.name}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
+
+      <SearchBar
+        value={query}
+        onChangeText={setQuery}
+        onSubmit={load}
+        placeholder="Search by course or department..."
+        variant="light"
+      />
+
       <FlatList
         data={items}
         keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <PastQuestionCard
             item={item}
-            onPress={() => navigation.navigate('PastQuestionDetail', { id: item.id })}
+            onPreview={() => navigation.navigate('PastQuestionDetail', { id: item.id })}
+            onDownload={() => handleDownload(item)}
           />
         )}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={load} tintColor="#fff" />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={load} tintColor="#2563eb" />
+        }
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
-  categoriesScroll: { maxHeight: 44, marginBottom: 4 },
-  categoriesRow: { paddingHorizontal: 16, paddingVertical: 8, flexDirection: 'row', alignItems: 'center' },
-  chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#1e293b',
-    marginRight: 8,
+  container: { flex: 1, backgroundColor: '#f1f5f9' },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 4,
+    paddingBottom: 2,
   },
-  chipSelected: { backgroundColor: '#167F71' },
-  chipText: { fontSize: 13, color: '#94a3b8', fontWeight: '500' },
-  chipTextSelected: { color: '#fff' },
+  subtitle: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  categoriesScroll: { maxHeight: 48, marginBottom: 4 },
+  categoriesRow: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#e5e7eb',
+    marginRight: 10,
+  },
+  chipSelected: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  chipText: {
+    fontSize: 14,
+    color: '#6b7280',
+    fontWeight: '500',
+  },
+  chipTextSelected: {
+    color: '#2563eb',
+    fontWeight: '600',
+  },
+  listContent: { paddingTop: 8, paddingBottom: 24 },
 });
 
 export default PastQuestionsListScreen;
-

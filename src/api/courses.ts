@@ -1,6 +1,9 @@
 import { api } from '@/api/client';
 import type { Category } from '@/api/categories';
 
+/** Lesson type: video (play) or text (read) */
+export type LessonType = 'video' | 'text';
+
 export interface Lesson {
   id: number;
   module_id: number;
@@ -8,6 +11,10 @@ export interface Lesson {
   video_url: string;
   duration: number | null;
   order: number;
+  /** Optional: 'video' | 'text'. Inferred from video_url/content if missing */
+  type?: LessonType;
+  /** Optional: HTML or plain text for text lessons */
+  content?: string | null;
 }
 
 export interface Module {
@@ -45,6 +52,12 @@ export const fetchCourses = async (params?: {
 
 export const fetchCourse = async (id: number): Promise<Course> => {
   const res = await api.get<Course>(`/courses/${id}`);
+  return res.data;
+};
+
+/** Fetch a single module with its lessons (for curriculum and lesson screen) */
+export const fetchModuleWithLessons = async (moduleId: number): Promise<Module> => {
+  const res = await api.get<Module>(`/modules/${moduleId}`);
   return res.data;
 };
 

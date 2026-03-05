@@ -14,6 +14,10 @@ export interface PastQuestion {
   file_size: number;
   is_published: boolean;
   created_at: string;
+  /** Optional: number of questions (if provided by API) */
+  questions_count?: number | null;
+  /** Optional: download count (if provided by API) */
+  downloads_count?: number | null;
 }
 
 export interface Paginated<T> {
