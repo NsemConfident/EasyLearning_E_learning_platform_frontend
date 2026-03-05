@@ -41,7 +41,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const loadCategories = useCallback(async () => {
     try {
-      const res = await fetchCategories({ per_page: 100 });
+      const res = await fetchCategories({ type: 'course', per_page: 100 });
       setCategories(res.data);
     } catch {
       setCategories([]);

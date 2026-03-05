@@ -37,7 +37,7 @@ const PastQuestionsListScreen: React.FC<Props> = ({ navigation }) => {
 
   const loadCategories = useCallback(async () => {
     try {
-      const res = await fetchCategories({ per_page: 100 });
+      const res = await fetchCategories({ type: 'past_question', per_page: 100 });
       setCategories(res.data);
     } catch {
       setCategories([]);
