@@ -51,7 +51,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <NavHeader
         title="Courses"
-        variant="light"
+        variant="dark"
         showBackButton={false}
         onMenuPress={() => {}}
         onNotificationPress={() => {}}
@@ -99,21 +99,23 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f3f4f6' },
   container: { flex: 1, backgroundColor: '#f3f4f6' },
-  categoriesScroll: { maxHeight: 44, marginBottom: 8 },
+  categoriesScroll: { maxHeight: 70},
   categoriesRow: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
   chip: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: '#e5e7eb',
     marginRight: 10,
   },
-  chipSelected: { backgroundColor: '#22c55e' },
+  chipSelected: { 
+    backgroundColor: '#167F71',
+   },
   chipText: { fontSize: 14, color: '#374151', fontWeight: '500' },
   chipTextSelected: { color: '#ffffff' },
   listContent: { padding: 16, paddingBottom: 24 },
