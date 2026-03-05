@@ -10,6 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebar } from '@/context/SidebarContext';
 
 export type NavHeaderVariant = 'light' | 'dark';
 
@@ -38,6 +39,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({
 }) => {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
+  const { openSidebar } = useSidebar();
 
   const isLight = variant === 'light';
   const iconColor = isLight ? '#374151' : '#e5e7eb';
@@ -96,7 +98,10 @@ const NavHeader: React.FC<NavHeaderProps> = ({
         <View style={styles.right}>
           {showMenu && (
             <TouchableOpacity
-              onPress={onMenuPress}
+              onPress={() => {
+                openSidebar();
+                onMenuPress?.();
+              }}
               style={styles.iconButton}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               accessibilityLabel="Menu"
