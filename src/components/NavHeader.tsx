@@ -130,7 +130,7 @@ const NavHeader: React.FC<NavHeaderProps> = ({
                   accessibilityIgnoresInvertColors
                 />
               ) : (
-                <View style={[styles.avatarPlaceholder, { backgroundColor: isLight ? '#22c55e' : '#334155' }]}>
+                <View style={[styles.avatarPlaceholder, { backgroundColor: isLight ? '#167F71' : '#334155' }]}>
                   <Text style={styles.avatarInitials}>
                     {user ? getInitials(user.name) : '?'}
                   </Text>

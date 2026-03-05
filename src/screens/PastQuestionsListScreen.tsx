@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   categoriesScroll: { maxHeight: 48, marginBottom: 4 },
   categoriesRow: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 4,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   chipTextSelected: {
-    color: '#2563eb',
+    color: '#167F71',
     fontWeight: '600',
   },
   listContent: { paddingTop: 8, paddingBottom: 24 },
