@@ -1,4 +1,5 @@
 import { api } from '@/api/client';
+import type { Category } from '@/api/categories';
 
 export interface Lesson {
   id: number;
@@ -25,6 +26,8 @@ export interface Course {
   price: string;
   instructor_name: string;
   is_published: boolean;
+  category_id?: number | null;
+  category?: Category | null;
   modules?: Module[];
 }
 
@@ -32,8 +35,11 @@ export interface Paginated<T> {
   data: T[];
 }
 
-export const fetchCourses = async (): Promise<Paginated<Course>> => {
-  const res = await api.get<Paginated<Course>>('/courses');
+/** List courses. Optional category_id to filter by category. */
+export const fetchCourses = async (params?: {
+  category_id?: number;
+}): Promise<Paginated<Course>> => {
+  const res = await api.get<Paginated<Course>>('/courses', { params });
   return res.data;
 };
 

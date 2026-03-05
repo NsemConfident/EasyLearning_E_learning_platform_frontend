@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,40 +12,58 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '@/navigation/RootNavigator';
 import { fetchCourses, Course } from '@/api/courses';
+import { fetchCategories, Category } from '@/api/categories';
 import CourseCard from '@/components/CourseCard';
 import NavHeader from '@/components/NavHeader';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'App'>;
 
-const CATEGORIES = ['All', 'Programming', 'Design', 'Web Development', 'Marketing', 'Business'];
+const ALL_ID = 0;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(ALL_ID);
+  const isFirstCategoryEffect = useRef(true);
 
-  const load = useCallback(async () => {
+  const loadCourses = useCallback(async () => {
     setRefreshing(true);
     try {
-      const res = await fetchCourses();
+      const res = await fetchCourses(
+        selectedCategoryId === ALL_ID ? undefined : { category_id: selectedCategoryId }
+      );
       setCourses(res.data);
     } finally {
       setRefreshing(false);
     }
+  }, [selectedCategoryId]);
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const res = await fetchCategories({ per_page: 100 });
+      setCategories(res.data);
+    } catch {
+      setCategories([]);
+    }
   }, []);
+
+  const load = useCallback(async () => {
+    await loadCategories();
+    await loadCourses();
+  }, [loadCategories, loadCourses]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const filteredCourses =
-    selectedCategory === 'All'
-      ? courses
-      : courses.filter(
-          c =>
-            c.title.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-            (c.description?.toLowerCase().includes(selectedCategory.toLowerCase()) ?? false)
-        );
+  useEffect(() => {
+    if (isFirstCategoryEffect.current) {
+      isFirstCategoryEffect.current = false;
+      return;
+    }
+    loadCourses();
+  }, [selectedCategoryId, loadCourses]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -64,26 +82,36 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           contentContainerStyle={styles.categoriesRow}
           style={styles.categoriesScroll}
         >
-          {CATEGORIES.map(cat => (
+          <TouchableOpacity
+            key="all"
+            style={[styles.chip, selectedCategoryId === ALL_ID && styles.chipSelected]}
+            onPress={() => setSelectedCategoryId(ALL_ID)}
+          >
+            <Text style={[styles.chipText, selectedCategoryId === ALL_ID && styles.chipTextSelected]}>
+              All
+            </Text>
+          </TouchableOpacity>
+          {categories.map(cat => (
             <TouchableOpacity
-              key={cat}
-              style={[styles.chip, selectedCategory === cat && styles.chipSelected]}
-              onPress={() => setSelectedCategory(cat)}
+              key={cat.id}
+              style={[styles.chip, selectedCategoryId === cat.id && styles.chipSelected]}
+              onPress={() => setSelectedCategoryId(cat.id)}
             >
-              <Text style={[styles.chipText, selectedCategory === cat && styles.chipTextSelected]}>
-                {cat}
+              <Text style={[styles.chipText, selectedCategoryId === cat.id && styles.chipTextSelected]}>
+                {cat.name}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
         <FlatList
-          data={filteredCourses}
+          data={courses}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContent}
           renderItem={({ item }) => (
             <CourseCard
               course={item}
+              categoryLabel={item.category?.name ?? 'Course'}
               onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
             />
           )}

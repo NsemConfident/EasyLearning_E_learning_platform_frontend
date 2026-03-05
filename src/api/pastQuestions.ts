@@ -1,4 +1,5 @@
 import { api } from '@/api/client';
+import type { Category } from '@/api/categories';
 
 export interface PastQuestion {
   id: number;
@@ -8,6 +9,8 @@ export interface PastQuestion {
   level: string;
   year: string;
   category: string | null;
+  category_id?: number | null;
+  category_obj?: Category | null;
   file_size: number;
   is_published: boolean;
   created_at: string;
@@ -17,8 +20,11 @@ export interface Paginated<T> {
   data: T[];
 }
 
-export const fetchPastQuestions = async (): Promise<Paginated<PastQuestion>> => {
-  const res = await api.get<Paginated<PastQuestion>>('/past-questions');
+/** List past questions. Optional category_id to filter. */
+export const fetchPastQuestions = async (params?: {
+  category_id?: number;
+}): Promise<Paginated<PastQuestion>> => {
+  const res = await api.get<Paginated<PastQuestion>>('/past-questions', { params });
   return res.data;
 };
 
@@ -32,6 +38,7 @@ export const searchPastQuestions = async (params: {
   subject?: string;
   year?: string;
   level?: string;
+  category_id?: number;
 }): Promise<Paginated<PastQuestion>> => {
   const res = await api.get<Paginated<PastQuestion>>('/past-questions/search', {
     params,
