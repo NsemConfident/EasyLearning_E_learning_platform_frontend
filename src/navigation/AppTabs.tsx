@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeScreen from '@/screens/HomeScreen';
 import PastQuestionsListScreen from '@/screens/PastQuestionsListScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
@@ -13,8 +14,14 @@ export type AppTabParamList = {
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
-const AppTabs = () => (
-  
+const TAB_BAR_HEIGHT = 60;
+const TAB_BAR_PADDING_BOTTOM = 8;
+
+const AppTabs = () => {
+  const insets = useSafeAreaInsets();
+  const bottomInset = insets.bottom;
+
+  return (
   <Tab.Navigator 
   screenOptions={({ route }) => ({
     headerShown: false,
@@ -42,8 +49,9 @@ const AppTabs = () => (
     tabBarActiveTintColor: '#167F71',
     tabBarInactiveTintColor: 'gray',
     tabBarStyle: {
-      height: 60,
-      paddingBottom: 8,
+      height: TAB_BAR_HEIGHT + bottomInset,
+      paddingBottom: TAB_BAR_PADDING_BOTTOM + bottomInset,
+      paddingTop: TAB_BAR_PADDING_BOTTOM,
     },
     tabBarLabelStyle: {
       fontSize: 12,
@@ -55,7 +63,8 @@ const AppTabs = () => (
     <Tab.Screen name="PastQuestions" component={PastQuestionsListScreen} options={{ title: 'Past Questions' }} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
-);
+  );
+};
 
 export default AppTabs;
 
